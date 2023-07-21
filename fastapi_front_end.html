@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommendation</title>
+</head>
+<body>
+    <h2>Enter Movie Information</h2>
+
+    <form id="movies-form">
+        <label for="imdb">IMDB Rating:</label><br>
+        <input type="number" step="0.1" id="imdb" name="imdb" required><br>
+        
+        <label for="genres">Select Genres:</label><br>
+        <input type="checkbox" id="biography" name="biography">Biography<br>
+        <input type="checkbox" id="drama" name="drama">Drama<br>
+        <input type="checkbox" id="thriller" name="thriller">Thriller<br>
+        <input type="checkbox" id="comedy" name="comedy">Comedy<br>
+        <input type="checkbox" id="crime" name="crime">Crime<br>
+        <input type="checkbox" id="mystery" name="mystery">Mystery<br>
+        <input type="checkbox" id="history" name="history">History<br>
+        
+        <input type="submit" value="Get Recommendations">
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('movies-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let imdb = document.getElementById('imdb').value;
+            let biography = document.getElementById('biography').checked ? 1 : 0;
+            let drama = document.getElementById('drama').checked ? 1 : 0;
+            let thriller = document.getElementById('thriller').checked ? 1 : 0;
+            let comedy = document.getElementById('comedy').checked ? 1 : 0;
+            let crime = document.getElementById('crime').checked ? 1 : 0;
+            let mystery = document.getElementById('mystery').checked ? 1 : 0;
+            let history = document.getElementById('history').checked ? 1 : 0;
+            
+            let data = {
+                "imdb": imdb,
+                "biography": biography,
+                "drama": drama,
+                "thriller": thriller,
+                "comedy": comedy,
+                "crime": crime,
+                "mystery": mystery,
+                "history": history,
+            };
+
+            fetch('http://127.0.0.1:8000/movies_prediction', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
+                data.forEach(movie => {
+                    resultDiv.innerHTML += `<p>${movie}</p>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+
+</body>
+</html>
